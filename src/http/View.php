@@ -28,7 +28,10 @@ class View
             'cache' => $config->get('template.cache_path')
         ]);
         $func = new \Twig_SimpleFunction('url', function($class_method, array $querys=[], array $params=[]){
-            return Route::url(\explode('@', $class_method), $querys, $params);
+            if (\strpos($class_method, '\\') !== false) {
+                $class_method = \explode('@', $class_method);
+            }
+            return Route::url($class_method, $querys, $params);
         });
         $this->engine->addFunction($func);
         $this->suffix = $config->get('template.suffix');

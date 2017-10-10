@@ -94,8 +94,11 @@ class Route
 
     public static function any($route, $handler)
     {
-        $method = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'];
-        return static::map($id, $method, $route, $handler);
+        $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'];
+        foreach($methods as $method) {
+            static::map($method, $route, $handler);
+        }
+        return static::mapObject($route, $handler);
     }
 
     public static function group($prefix, callable $callable)
@@ -157,7 +160,13 @@ class Route
 
     protected static function getHandlerKey($handler)
     {
-        return \is_array($handler) ? \implode('\\', $handler) : $handler;
+        if (is_array($handler)) {
+            return \implode('\\', $handler);
+        } else if (\is_string($handler)) {
+            return ltrim(\str_replace(['/', '@'], '\\', $handler), '\\');
+        }
+        throw new RouteException("Route handler type must "
+        . "be [class, action] or [class]  or class@action string");
     }
     
 }
