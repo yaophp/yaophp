@@ -114,6 +114,16 @@ class Request extends Datagram
         $this->body_parsed = $data;
         return $this;
     }
+
+    /*******************************************************************************
+     * client ip
+     ******************************************************************************/
+    public function getIp($int=false)
+    {
+        // todo fix for proxy
+        $ip = $this->environment['REMOTE_ADDR'];
+        return $int ? \intval(str_replace('.', '', $ip)) : $ip;
+    }
     
     /*******************************************************************************
      * Input
