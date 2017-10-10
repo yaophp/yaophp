@@ -128,7 +128,7 @@ class Response extends Datagram
         $this->outputHeader();
         $this->outputBody();
     }
-    
+
     protected function outputHeader()
     {
         if (!headers_sent()) {

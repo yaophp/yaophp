@@ -37,6 +37,18 @@ class Api
         exit;
     }
 
+    public function ajax($data)
+    {
+        $this->response->withJson($data);
+        $this->response->output();
+    }
+
+    public function notFound($msg='not found')
+    {
+        $this->response->withStatus(404);
+        $this->error($msg);
+    }
+
     public function get()
     {
         throw new \HttpException('http request method not allow');
