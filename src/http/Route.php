@@ -84,21 +84,32 @@ class Route
         return static::mapObject($route, $handler);
     }
 
-    public static function match(array $methods, $route, $handler)
+    public static function match(array $methods, $route, $class)
     {
+        $handler = [$class];
         foreach($methods as $method) {
             static::map($method, $route, $handler);
         }
         return static::mapObject($route, $handler);
     }
 
-    public static function any($route, $handler)
+    public static function any($route, $class)
     {
+        $handler = [$class];
         $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'];
         foreach($methods as $method) {
             static::map($method, $route, $handler);
         }
         return static::mapObject($route, $handler);
+    }
+
+    public static function source($route, $class)
+    {
+        return static::group($route, function($route) use($class){
+            $route->get('', [$class, 'index']);
+            $route->post('/', [$class, 'post']);
+            $route->match(['GET', 'PUT', 'DELETE'] , '/:id', $class);
+        });
     }
 
     public static function group($prefix, callable $callable)
@@ -120,6 +131,9 @@ class Route
 
     public static function url($handler, array $query=[], array $params=[])
     {
+        if (\is_string($handler) && \strpos($handler, '\\') !== false) {
+            $handler = [$handler];
+        }
         $key = static::getHandlerKey($handler);
         if (!($result = static::$routeObjects[$key])) {
             throw new RouteException("$key handler not match any route");

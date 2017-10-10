@@ -49,6 +49,11 @@ class Api
         $this->error($msg);
     }
 
+    public function index()
+    {
+        throw new \HttpException('http request method not allow');
+    }
+
     public function get()
     {
         throw new \HttpException('http request method not allow');
