@@ -37,6 +37,11 @@ class App extends Container
                 return new Config($file);
             });
         }
+        spl_autoload_register(function($class){
+            $pathApp = App::instance()->get(Config::class)->get('path.root');
+            $file = str_replace(['\\', '//'], '/', $pathApp . DIRECTORY_SEPARATOR . $class . '.php');
+            return include ($file);
+        });
     }
 
     public static function instance($fileConfig='')
